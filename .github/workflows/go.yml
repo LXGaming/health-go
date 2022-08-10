@@ -23,32 +23,41 @@ jobs:
       env:
         GOARCH: amd64
         GOOS: darwin
-      run: go build -o ./dist/${GITHUB_REPOSITORY#*/}-${GOOS}-${GOARCH}
+      run: go build -o ./dist/darwin-amd64/${GITHUB_REPOSITORY#*/}
     - name: Build darwin-arm64
       env:
         GOARCH: arm64
         GOOS: darwin
-      run: go build -o ./dist/${GITHUB_REPOSITORY#*/}-${GOOS}-${GOARCH}
+      run: go build -o ./dist/darwin-arm64/${GITHUB_REPOSITORY#*/}
     - name: Build linux-amd64
       env:
         GOARCH: amd64
         GOOS: linux
-      run: go build -o ./dist/${GITHUB_REPOSITORY#*/}-${GOOS}-${GOARCH}
+      run: go build -o ./dist/linux-amd64/${GITHUB_REPOSITORY#*/}
     - name: Build linux-arm64
       env:
         GOARCH: arm64
         GOOS: linux
-      run: go build -o ./dist/${GITHUB_REPOSITORY#*/}-${GOOS}-${GOARCH}
+      run: go build -o ./dist/linux-arm64/${GITHUB_REPOSITORY#*/}
     - name: Build windows-amd64
       env:
         GOARCH: amd64
         GOOS: windows
-      run: go build -o ./dist/${GITHUB_REPOSITORY#*/}-${GOOS}-${GOARCH}.exe
+      run: go build -o ./dist/windows-amd64/${GITHUB_REPOSITORY#*/}.exe
     - name: Build windows-arm64
       env:
         GOARCH: arm64
         GOOS: windows
-      run: go build -o ./dist/${GITHUB_REPOSITORY#*/}-${GOOS}-${GOARCH}.exe
+      run: go build -o ./dist/windows-arm64/${GITHUB_REPOSITORY#*/}.exe
+    - name: Archive Binaries
+      if: github.event_name == 'create' && github.event.ref_type == 'tag'
+      run: |
+        cd $GITHUB_WORKSPACE/dist/darwin-amd64 && zip -mr ../${GITHUB_REPOSITORY#*/}-darwin-amd64.zip .
+        cd $GITHUB_WORKSPACE/dist/darwin-arm64 && zip -mr ../${GITHUB_REPOSITORY#*/}-darwin-arm64.zip .
+        cd $GITHUB_WORKSPACE/dist/linux-amd64 && zip -mr ../${GITHUB_REPOSITORY#*/}-linux-amd64.zip .
+        cd $GITHUB_WORKSPACE/dist/linux-arm64 && zip -mr ../${GITHUB_REPOSITORY#*/}-linux-arm64.zip .
+        cd $GITHUB_WORKSPACE/dist/windows-amd64 && zip -mr ../${GITHUB_REPOSITORY#*/}-windows-amd64.zip .
+        cd $GITHUB_WORKSPACE/dist/windows-arm64 && zip -mr ../${GITHUB_REPOSITORY#*/}-windows-arm64.zip .
     - name: Setup Release
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
       run: echo "release_name=${GITHUB_REPOSITORY#*/} ${GITHUB_REF_NAME}" >> $GITHUB_ENV
