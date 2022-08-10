@@ -1,0 +1,61 @@
+name: Go
+
+on:
+  create:
+    tags: [ 'v*.*.*' ]
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  go:
+    name: Go
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup Go
+      uses: actions/setup-go@v3
+      with:
+        go-version-file: go.mod
+    - name: Build darwin-amd64
+      env:
+        GOARCH: amd64
+        GOOS: darwin
+      run: go build -o ./dist/${GITHUB_REPOSITORY#*/}-${GOOS}-${GOARCH}
+    - name: Build darwin-arm64
+      env:
+        GOARCH: arm64
+        GOOS: darwin
+      run: go build -o ./dist/${GITHUB_REPOSITORY#*/}-${GOOS}-${GOARCH}
+    - name: Build linux-amd64
+      env:
+        GOARCH: amd64
+        GOOS: linux
+      run: go build -o ./dist/${GITHUB_REPOSITORY#*/}-${GOOS}-${GOARCH}
+    - name: Build linux-arm64
+      env:
+        GOARCH: arm64
+        GOOS: linux
+      run: go build -o ./dist/${GITHUB_REPOSITORY#*/}-${GOOS}-${GOARCH}
+    - name: Build windows-amd64
+      env:
+        GOARCH: amd64
+        GOOS: windows
+      run: go build -o ./dist/${GITHUB_REPOSITORY#*/}-${GOOS}-${GOARCH}.exe
+    - name: Build windows-arm64
+      env:
+        GOARCH: arm64
+        GOOS: windows
+      run: go build -o ./dist/${GITHUB_REPOSITORY#*/}-${GOOS}-${GOARCH}.exe
+    - name: Setup Release
+      if: github.event_name == 'create' && github.event.ref_type == 'tag'
+      run: echo "release_name=${GITHUB_REPOSITORY#*/} ${GITHUB_REF_NAME}" >> $GITHUB_ENV
+    - name: Release
+      if: github.event_name == 'create' && github.event.ref_type == 'tag'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./dist/*
+        generate_release_notes: true
+        name: ${{ env.release_name }}
