@@ -23,32 +23,32 @@ jobs:
       env:
         GOARCH: amd64
         GOOS: darwin
-      run: go build -o ./dist/darwin-amd64/${GITHUB_REPOSITORY#*/}
+      run: go build -o ./dist/darwin-amd64/health
     - name: Build darwin-arm64
       env:
         GOARCH: arm64
         GOOS: darwin
-      run: go build -o ./dist/darwin-arm64/${GITHUB_REPOSITORY#*/}
+      run: go build -o ./dist/darwin-arm64/health
     - name: Build linux-amd64
       env:
         GOARCH: amd64
         GOOS: linux
-      run: go build -o ./dist/linux-amd64/${GITHUB_REPOSITORY#*/}
+      run: go build -o ./dist/linux-amd64/health
     - name: Build linux-arm64
       env:
         GOARCH: arm64
         GOOS: linux
-      run: go build -o ./dist/linux-arm64/${GITHUB_REPOSITORY#*/}
+      run: go build -o ./dist/linux-arm64/health
     - name: Build windows-amd64
       env:
         GOARCH: amd64
         GOOS: windows
-      run: go build -o ./dist/windows-amd64/${GITHUB_REPOSITORY#*/}.exe
+      run: go build -o ./dist/windows-amd64/health.exe
     - name: Build windows-arm64
       env:
         GOARCH: arm64
         GOOS: windows
-      run: go build -o ./dist/windows-arm64/${GITHUB_REPOSITORY#*/}.exe
+      run: go build -o ./dist/windows-arm64/health.exe
     - name: Archive Binaries
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
       run: |
