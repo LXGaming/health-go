@@ -15,7 +15,7 @@ func main() {
 	conn, err := net.Dial("tcp", *address)
 	if err != nil {
 		fmt.Println("dial error:", err)
-		os.Exit(1)
+		os.Exit(3)
 	}
 
 	buf := make([]byte, 1)
@@ -23,6 +23,7 @@ func main() {
 	n, err := io.ReadFull(conn, buf)
 	if err != nil {
 		fmt.Println("read error:", err)
+		os.Exit(3)
 	}
 
 	err = conn.Close()
