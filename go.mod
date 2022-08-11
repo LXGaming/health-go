@@ -1,3 +1,3 @@
-module github.com/LXGaming/go-health
+module github.com/LXGaming/health-go
 
 go 1.19
