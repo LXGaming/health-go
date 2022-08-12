@@ -8,6 +8,10 @@ import (
 	"os"
 )
 
+const Healthy = 0
+const Unhealthy = 1
+const MaximumStringSize = 4096 // 4 KiB
+
 func main() {
 	address := flag.String("a", "127.0.0.1:4325", "address")
 	flag.Parse()
@@ -18,9 +22,8 @@ func main() {
 		os.Exit(3)
 	}
 
-	buf := make([]byte, 1)
-
-	n, err := io.ReadFull(conn, buf)
+	lr := io.LimitReader(conn, 1+MaximumStringSize)
+	buf, err := io.ReadAll(lr)
 	if err != nil {
 		fmt.Println("read error:", err)
 		os.Exit(3)
@@ -31,9 +34,22 @@ func main() {
 		fmt.Println("close error:", err)
 	}
 
-	if n == 1 && buf[0] == 0 {
-		os.Exit(0)
+	var state bool
+	var message string
+	switch len(buf) {
+	case 0:
+		state = false
+	case 1:
+		state = buf[0] == Healthy
+	default:
+		state = buf[0] == Healthy
+		message = string(buf[1:])
+	}
+
+	fmt.Print(message)
+	if state {
+		os.Exit(Healthy)
 	} else {
-		os.Exit(1)
+		os.Exit(Unhealthy)
 	}
 }
