@@ -6,7 +6,7 @@ WORKDIR /src
 COPY go.mod .
 RUN go mod download
 
-COPY *.go .
+COPY *.go ./
 RUN GOARCH=$TARGETARCH GOOS=$TARGETOS go build -o /app/health
 
 FROM gcr.io/distroless/base:latest
