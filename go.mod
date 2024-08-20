@@ -1,3 +1,3 @@
 module github.com/LXGaming/health-go
 
-go 1.22
+go 1.23
