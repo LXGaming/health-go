@@ -24,6 +24,8 @@ jobs:
         with:
           cache: false
           go-version-file: go.mod
+      - name: Setup Release
+        run: echo "RELEASE_NAME=${GITHUB_REPOSITORY#*/} ${GITHUB_REF_NAME}" >> $GITHUB_ENV
       - name: Build darwin-x64
         env:
           GOARCH: amd64
@@ -63,13 +65,10 @@ jobs:
           cd "$GITHUB_WORKSPACE/dist/linux-arm64" && zip -mr "../${GITHUB_REPOSITORY#*/}-linux-arm64.zip" .
           cd "$GITHUB_WORKSPACE/dist/windows-x64" && zip -mr "../${GITHUB_REPOSITORY#*/}-windows-x64.zip" .
           cd "$GITHUB_WORKSPACE/dist/windows-arm64" && zip -mr "../${GITHUB_REPOSITORY#*/}-windows-arm64.zip" .
-      - name: Setup Release
-        if: github.event_name == 'create' && github.event.ref_type == 'tag'
-        run: echo "release_name=${GITHUB_REPOSITORY#*/} ${GITHUB_REF_NAME}" >> $GITHUB_ENV
       - name: Release
         if: github.event_name == 'create' && github.event.ref_type == 'tag'
         uses: softprops/action-gh-release@v3
         with:
           files: ./dist/*
           generate_release_notes: true
-          name: ${{ env.release_name }}
+          name: ${{ env.RELEASE_NAME }}
